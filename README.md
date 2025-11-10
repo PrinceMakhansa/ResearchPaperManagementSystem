@@ -25,7 +25,7 @@ A comprehensive web application for managing research paper submissions and peer
 ## 🏗️ Architecture
 
 ### Technology Stack
-- **Backend**: Java Servlets, JSP
+- **Backend**: Java Servlets, JSP, Spring
 - **Database**: MySQL 8.0
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Server**: Apache Tomcat 9.0
@@ -241,10 +241,6 @@ The database setup includes sample users and papers for testing:
 - Follow existing code style
 - Include proper documentation
 - Verify security implications
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🆘 Support
 
