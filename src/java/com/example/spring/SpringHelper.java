@@ -1,7 +1,6 @@
 package com.example.spring;
 
 /**
- * Minimal Spring integration without compile-time dependency.
  * Uses reflection to load Spring's ClassPathXmlApplicationContext if jars are present at runtime.
  */
 public final class SpringHelper {
