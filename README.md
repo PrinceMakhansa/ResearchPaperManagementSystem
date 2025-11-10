@@ -252,4 +252,3 @@ For issues and questions:
 
 ---
 
-*Built with ❤️ for academic research management*
