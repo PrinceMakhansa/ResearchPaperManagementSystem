@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ResearchPaperManagement" default="dist" basedir=".">
+    <description>Research Paper Management System - Build File</description>
+
+    <!-- Properties -->
+    <property name="src.dir" value="src/java"/>
+    <property name="web.dir" value="web"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.web.dir" value="${build.dir}/web"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="classes.dir" value="${build.dir}/WEB-INF/classes"/>
+
+    <!-- Clean target -->
+    <target name="clean" description="Clean up build directories">
+        <delete dir="${build.dir}" quiet="true"/>
+        <delete dir="${dist.dir}" quiet="true"/>
+    </target>
+
+    <!-- Initialize target -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.web.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile target -->
+    <target name="compile" depends="init" description="Compile Java sources">
+        <javac srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               includeantruntime="false"
+               fork="true"
+               source="1.8"
+               target="1.8"
+               encoding="UTF-8">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+            <compilerarg value="-Xlint:deprecation"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+
+        <!-- Copy resources -->
+        <copy todir="${classes.dir}">
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
+        </copy>
+
+        <!-- Copy application context XML if exists -->
+        <copy file="${src.dir}/applicationContext.xml" todir="${classes.dir}" quiet="true" failonerror="false"/>
+    </target>
+
+    <!-- Copy web resources -->
+    <target name="copy-web" depends="compile" description="Copy web resources">
+        <copy todir="${build.web.dir}">
+            <fileset dir="${web.dir}">
+                <exclude name="**/WEB-INF/classes/**"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy lib to build/web/WEB-INF/lib -->
+        <mkdir dir="${build.web.dir}/WEB-INF/lib"/>
+        <copy todir="${build.web.dir}/WEB-INF/lib">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy compiled classes -->
+        <copy todir="${build.web.dir}/WEB-INF/classes">
+            <fileset dir="${classes.dir}"/>
+        </copy>
+    </target>
+
+    <!-- Build WAR file -->
+    <target name="war" depends="copy-web" description="Build WAR file">
+        <war destfile="${dist.dir}/${ant.project.name}.war" webxml="${build.web.dir}/WEB-INF/web.xml">
+            <fileset dir="${build.web.dir}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+        </war>
+    </target>
+
+    <!-- Dist target (default) -->
+    <target name="dist" depends="clean, compile, war" description="Build and package the application">
+        <echo message="Building ${ant.project.name}..."/>
+        <echo message="WAR file created: ${dist.dir}/${ant.project.name}.war"/>
+    </target>
+
+    <!-- Quick build without cleaning -->
+    <target name="build" depends="compile, copy-web, war" description="Quick build without clean">
+        <echo message="Build completed: ${dist.dir}/${ant.project.name}.war"/>
+    </target>
+
+    <!-- Run the application (requires Tomcat) -->
+    <target name="run" depends="dist" description="Deploy and run on Tomcat">
+        <echo message="WAR file ready at: ${dist.dir}/${ant.project.name}.war"/>
+        <echo message="Deploy to Tomcat: cp dist/${ant.project.name}.war $TOMCAT_HOME/webapps/"/>
+    </target>
+
+    <!-- Test compilation (check for errors) -->
+    <target name="compile-test" description="Test compilation only">
+        <ant antfile="${build.dir}/WEB-INF/classes" target="compile" quiet="true"/>
+    </target>
+
+    <!-- Show project info -->
+    <target name="info" description="Show project information">
+        <echo message="Project: ${ant.project.name}"/>
+        <echo message="Source: ${src.dir}"/>
+        <echo message="Web: ${web.dir}"/>
+        <echo message="Build: ${build.dir}"/>
+        <echo message="Lib: ${lib.dir}"/>
+    </target>
+</project>
