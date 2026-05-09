@@ -35,90 +35,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Research Repository</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <style>
-        .welcome-section {
-            background: var(--gradient);
-            color: white;
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .welcome-title {
-            font-size: 2rem;
-            margin: 0 0 0.5rem 0;
-            font-weight: 700;
-        }
-        .welcome-subtitle {
-            opacity: 0.9;
-            font-size: 1.125rem;
-            margin: 0;
-        }
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        .action-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.2s ease;
-            display: block;
-        }
-        .action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            text-decoration: none;
-            color: var(--text);
-        }
-        .action-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-        .action-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0 0 0.5rem 0;
-        }
-        .action-description {
-            color: var(--text-light);
-            margin: 0;
-        }
-        .recent-papers {
-            margin-top: 2rem;
-        }
-        .paper-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .paper-info h4 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1rem;
-        }
-        .paper-meta {
-            color: var(--text-light);
-            font-size: 0.875rem;
-        }
-    </style>
 </head>
 <body>
 <nav class="site-nav">
     <div class="inner">
         <h1>Research Repository</h1>
         <ul>
-            <li><a href="dashboard">Dashboard</a></li>
+            <li><a href="dashboard" class="active">Dashboard</a></li>
             <li><a href="listPapers"><%= currentUser.isStudent() ? "My Papers" : "All Papers" %></a></li>
             <% if (currentUser.isStudent()) { %>
                 <li><a href="allPapers">All Papers</a></li>
@@ -132,12 +55,12 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="welcome-section">
-        <h2 class="welcome-title">Welcome back, <%= currentUser.getName() %>!</h2>
-        <p class="welcome-subtitle">You are logged in as a <%= currentUser.getDisplayRole() %></p>
+<main class="container">
+    <div style="margin-bottom: var(--space-8);">
+        <h2 style="margin-bottom: var(--space-2);">Welcome back, <%= currentUser.getName() %></h2>
+        <p style="margin: 0;">Logged in as <strong><%= currentUser.getDisplayRole() %></strong></p>
         <% if (springGreeting != null) { %>
-            <p style="margin-top:0.75rem;font-size:0.95rem;opacity:0.9;"><%= springGreeting %></p>
+            <p style="margin-top: var(--space-2); font-size: var(--text-sm); color: var(--color-text-muted);"><%= springGreeting %></p>
         <% } %>
     </div>
 
@@ -150,116 +73,144 @@
         <div class="alert alert-success"><%= msg %></div>
     <% } %>
 
-    <!-- Statistics Cards -->
     <div class="stats-grid">
         <div class="stat-card">
-            <h4>Submitted Papers</h4>
+            <div class="label">Submitted</div>
             <div class="value"><%= submittedCount %></div>
         </div>
         <div class="stat-card">
-            <h4>Under Review</h4>
+            <div class="label">Under Review</div>
             <div class="value"><%= reviewCount %></div>
         </div>
         <div class="stat-card">
-            <h4>Accepted Papers</h4>
+            <div class="label">Accepted</div>
             <div class="value"><%= acceptedCount %></div>
         </div>
         <div class="stat-card">
-            <h4>Rejected Papers</h4>
+            <div class="label">Rejected</div>
             <div class="value"><%= rejectedCount %></div>
         </div>
         <% if (currentUser.isFaculty() || currentUser.isAdmin()) { %>
         <div class="stat-card">
-            <h4>Total Papers</h4>
+            <div class="label">Total Papers</div>
             <div class="value"><%= totalPapers %></div>
         </div>
         <% } %>
     </div>
 
-    <!-- Quick Actions -->
+    <h3 style="margin-bottom: var(--space-4);">Quick Actions</h3>
     <div class="quick-actions">
         <% if (currentUser.isStudent()) { %>
             <a href="uploadPaper" class="action-card">
-                <span class="action-icon"></span>
-                <h3 class="action-title">Submit New Paper</h3>
-                <p class="action-description">Upload your research paper for review</p>
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <h3>Submit New Paper</h3>
+                    <p>Upload your research paper for review</p>
+                </div>
             </a>
             <a href="listPapers" class="action-card">
-                <span class="action-icon"></span>
-                <h3 class="action-title">My Papers</h3>
-                <p class="action-description">View and manage your submitted papers</p>
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <h3>My Papers</h3>
+                    <p>View and manage your submissions</p>
+                </div>
             </a>
         <% } else { %>
             <a href="listPapers?status=submitted" class="action-card">
-                <span class="action-icon"></span>
-                <h3 class="action-title">Review Papers</h3>
-                <p class="action-description">Review submitted papers</p>
-            </a>
-            <a href="listPapers" class="action-card">
-                <span class="action-icon"></span>
-                <h3 class="action-title">All Papers</h3>
-                <p class="action-description">View all papers in the system</p>
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <h3>Review Papers</h3>
+                    <p>Review submitted papers</p>
+                </div>
             </a>
             <a href="facultyDashboard" class="action-card">
-                <span class="action-icon"></span>
-                <h3 class="action-title">Faculty Dashboard</h3>
-                <p class="action-description">Advanced management tools</p>
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <h3>Faculty Dashboard</h3>
+                    <p>Advanced management tools</p>
+                </div>
             </a>
         <% } %>
         <a href="listPapers?status=accepted" class="action-card">
-            <span class="action-icon"></span>
-            <h3 class="action-title">Accepted Papers</h3>
-            <p class="action-description">Browse accepted research papers</p>
+            <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="action-content">
+                <h3>Accepted Papers</h3>
+                <p>Browse accepted research papers</p>
+            </div>
         </a>
     </div>
 
-    <!-- Recent Papers Section -->
     <% if (recentPapers != null && !recentPapers.isEmpty()) { %>
-    <div class="recent-papers">
-        <h3>Recent Papers</h3>
-        <% for (Paper paper : recentPapers.subList(0, Math.min(5, recentPapers.size()))) { %>
-        <div class="paper-item">
-            <div class="paper-info">
-                <h4><%= paper.getTitle() %></h4>
-                <div class="paper-meta">
-                    By <%= paper.getAuthorName() != null ? paper.getAuthorName() : "Unknown" %> •
-                    <%= paper.getFormattedSubmissionDate() %>
+    <div style="margin-top: var(--space-8);">
+        <h3 style="margin-bottom: var(--space-4);">Recent Papers</h3>
+        <div class="paper-list">
+            <% for (Paper paper : recentPapers.subList(0, Math.min(5, recentPapers.size()))) { %>
+            <div class="paper-card">
+                <div class="paper-header">
+                    <div>
+                        <h4 class="paper-title"><%= paper.getTitle() %></h4>
+                        <div class="paper-meta">
+                            <span>By <%= paper.getAuthorName() != null ? paper.getAuthorName() : "Unknown" %></span>
+                            <span><%= paper.getFormattedSubmissionDate() %></span>
+                        </div>
+                    </div>
+                    <span class="badge badge-<%= paper.getStatus().replace(" ", "-") %>"><%= paper.getStatusDisplayName() %></span>
                 </div>
             </div>
-            <span class="<%= paper.getStatusBadgeClass() %>"><%= paper.getStatusDisplayName() %></span>
+            <% } %>
         </div>
-        <% } %>
-        <a href="listPapers" class="btn btn-soft">View All Papers</a>
+        <a href="listPapers" class="btn btn-secondary" style="margin-top: var(--space-4);">View All Papers</a>
     </div>
     <% } %>
 
-    <!-- Papers for Review (Faculty/Admin only) -->
     <% if ((currentUser.isFaculty() || currentUser.isAdmin()) && papersForReview != null && !papersForReview.isEmpty()) { %>
-    <div class="recent-papers">
-        <h3>Papers Pending Review (<%= papersForReview.size() %>)</h3>
-        <% for (Paper paper : papersForReview.subList(0, Math.min(5, papersForReview.size()))) { %>
-        <div class="paper-item">
-            <div class="paper-info">
-                <h4><%= paper.getTitle() %></h4>
-                <div class="paper-meta">
-                    By <%= paper.getAuthorName() != null ? paper.getAuthorName() : "Unknown" %> •
-                    <%= paper.getFormattedSubmissionDate() %>
+    <div style="margin-top: var(--space-8);">
+        <h3 style="margin-bottom: var(--space-4);">Papers Pending Review (<%= papersForReview.size() %>)</h3>
+        <div class="paper-list">
+            <% for (Paper paper : papersForReview.subList(0, Math.min(5, papersForReview.size()))) { %>
+            <div class="paper-card">
+                <div class="paper-header">
+                    <div>
+                        <h4 class="paper-title"><%= paper.getTitle() %></h4>
+                        <div class="paper-meta">
+                            <span>By <%= paper.getAuthorName() != null ? paper.getAuthorName() : "Unknown" %></span>
+                            <span><%= paper.getFormattedSubmissionDate() %></span>
+                        </div>
+                    </div>
+                    <form action="updatePaperStatus" method="post" style="display: inline;">
+                        <input type="hidden" name="paperId" value="<%= paper.getPaperId() %>">
+                        <input type="hidden" name="status" value="under review">
+                        <input type="hidden" name="redirectUrl" value="dashboard">
+                        <button type="submit" class="btn btn-primary btn-sm">Start Review</button>
+                    </form>
                 </div>
             </div>
-            <div>
-                <form action="updatePaperStatus" method="post" style="display: inline;">
-                    <input type="hidden" name="paperId" value="<%= paper.getPaperId() %>">
-                    <input type="hidden" name="status" value="under review">
-                    <input type="hidden" name="redirectUrl" value="dashboard">
-                    <button type="submit" class="btn btn-small">Start Review</button>
-                </form>
-            </div>
+            <% } %>
         </div>
-        <% } %>
-        <a href="listPapers?status=submitted" class="btn btn-soft">View All Pending Papers</a>
+        <a href="listPapers?status=submitted" class="btn btn-secondary" style="margin-top: var(--space-4);">View All Pending</a>
     </div>
     <% } %>
-</div>
+</main>
 
 </body>
 </html>

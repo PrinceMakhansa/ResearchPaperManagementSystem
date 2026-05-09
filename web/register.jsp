@@ -6,155 +6,93 @@
     <title>Register - Research Repository</title>
     <link rel="stylesheet" href="css/styles.css" />
     <style>
-        .register-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--gradient);
-            padding: 2rem;
-        }
-        .register-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            padding: 3rem;
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 500px;
-            border: 1px solid var(--border);
-        }
-        .register-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .register-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0 0 0.5rem 0;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .register-subtitle {
-            color: var(--text-light);
-            margin: 0;
-        }
-        .register-form {
-            display: grid;
-            gap: 1.5rem;
-        }
-        .form-footer {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-        .role-selection {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        .role-option {
-            padding: 1rem;
-            border: 2px solid var(--border);
+        .auth-form { display: grid; gap: var(--space-5); }
+        .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+        .role-card {
+            padding: var(--space-4);
+            border: 2px solid var(--color-border);
             border-radius: var(--radius);
-            text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--bg-alt);
+            text-align: center;
+            transition: all 0.15s ease;
         }
-        .role-option:hover {
-            border-color: var(--primary);
-        }
-        .role-option.selected {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-        .role-option input[type="radio"] {
-            display: none;
-        }
-        .password-strength {
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
-        }
-        .strength-weak { color: var(--danger); }
-        .strength-medium { color: var(--warning); }
-        .strength-strong { color: var(--success); }
+        .role-card:hover { border-color: var(--color-primary); }
+        .role-card.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
+        .role-card input { display: none; }
+        .role-card h4 { margin-bottom: var(--space-1); }
+        .role-card p { font-size: var(--text-sm); color: var(--color-text-muted); margin: 0; }
+        .strength-bar { height: 4px; border-radius: 2px; margin-top: var(--space-2); background: var(--color-border); }
+        .strength-bar span { display: block; height: 100%; border-radius: 2px; width: 0; transition: all 0.3s ease; }
+        .strength-weak span { width: 33%; background: var(--color-danger); }
+        .strength-medium span { width: 66%; background: var(--color-warning); }
+        .strength-strong span { width: 100%; background: var(--color-success); }
     </style>
 </head>
 <body>
-<div class="register-container">
-    <div class="register-card">
-        <div class="register-header">
-            <h1 class="register-title">Research Repository</h1>
-            <p class="register-subtitle">Create your account to get started</p>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Join the Research Repository</p>
         </div>
 
-        <%
-        String error = (String) request.getAttribute("error");
-        if (error != null) {
-        %>
-            <div class="alert alert-error">
-                <%= error %>
-            </div>
+        <% String error = (String) request.getAttribute("error");
+           if (error != null) { %>
+            <div class="alert alert-error"><%= error %></div>
         <% } %>
 
-        <form action="register" method="post" class="register-form" id="registerForm">
-            <div class="form-row">
-                <label for="name">Full Name</label>
-                <input id="name" type="text" name="name" required
+        <form action="register" method="post" class="auth-form" id="registerForm">
+            <div class="form-group">
+                <label class="form-label" for="name">Full Name</label>
+                <input class="form-input" id="name" type="text" name="name" required
                        placeholder="Enter your full name"
                        value="<%= request.getAttribute("name") != null ? request.getAttribute("name") : "" %>" />
             </div>
 
-            <div class="form-row">
-                <label for="email">Email Address</label>
-                <input id="email" type="email" name="email" required
-                       placeholder="Enter your email address"
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input class="form-input" id="email" type="email" name="email" required
+                       placeholder="Enter your email"
                        value="<%= request.getAttribute("email") != null ? request.getAttribute("email") : "" %>" />
             </div>
 
-            <div class="form-row">
-                <label for="password">Password</label>
-                <input id="password" type="password" name="password" required
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" id="password" type="password" name="password" required
                        placeholder="Create a strong password" />
-                <div class="password-strength" id="passwordStrength"></div>
+                <div class="strength-bar" id="strengthBar"><span></span></div>
+                <small id="strengthText" style="color: var(--color-text-muted); margin-top: var(--space-1);"></small>
             </div>
 
-            <div class="form-row">
-                <label for="confirmPassword">Confirm Password</label>
-                <input id="confirmPassword" type="password" name="confirmPassword" required
+            <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <input class="form-input" id="confirmPassword" type="password" name="confirmPassword" required
                        placeholder="Confirm your password" />
             </div>
 
-            <div class="form-row">
-                <label>Select Your Role</label>
-                <div class="role-selection">
-                    <label class="role-option" for="student">
+            <div class="form-group">
+                <label class="form-label">Select Your Role</label>
+                <div class="role-cards">
+                    <label class="role-card" for="student">
                         <input type="radio" id="student" name="role" value="student"
                                <%= "student".equals(request.getAttribute("role")) ? "checked" : "" %>>
-                        <strong>Student</strong>
-                        <p>Submit and track your research papers</p>
+                        <h4>Student</h4>
+                        <p>Submit & track papers</p>
                     </label>
-                    <label class="role-option" for="faculty">
+                    <label class="role-card" for="faculty">
                         <input type="radio" id="faculty" name="role" value="faculty"
                                <%= "faculty".equals(request.getAttribute("role")) ? "checked" : "" %>>
-                        <strong>Faculty</strong>
-                        <p>Review and manage submitted papers</p>
+                        <h4>Faculty</h4>
+                        <p>Review & manage papers</p>
                     </label>
                 </div>
             </div>
 
-            <div class="form-row">
-                <button type="submit" class="btn btn-large">
-                    Create Account
-                </button>
-            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Create Account</button>
         </form>
 
-        <div class="form-footer">
-            <p>Already have an account? <a href="login"><strong>Sign in here</strong></a></p>
+        <div class="auth-footer">
+            <p style="margin: 0;">Already have an account? <a href="login"><strong>Sign in</strong></a></p>
         </div>
     </div>
 </div>
@@ -164,89 +102,65 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-focus name field
     document.getElementById('name').focus();
 
-    // Role selection
-    document.querySelectorAll('.role-option').forEach(function(option) {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('selected'));
+    // Role selection styling
+    document.querySelectorAll('.role-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             this.classList.add('selected');
-            this.querySelector('input[type="radio"]').checked = true;
         });
     });
 
     // Set initial selection
-    const checkedRole = document.querySelector('input[name="role"]:checked');
-    if (checkedRole) {
-        checkedRole.closest('.role-option').classList.add('selected');
-    }
+    const checked = document.querySelector('input[name="role"]:checked');
+    if (checked) checked.closest('.role-card').classList.add('selected');
 
-    // Password strength indicator
+    // Password strength
     const passwordField = document.getElementById('password');
-    const strengthIndicator = document.getElementById('passwordStrength');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
 
     passwordField.addEventListener('input', function() {
         const password = this.value;
-        const strength = calculatePasswordStrength(password);
+        let score = 0;
+        if (password.length >= 8) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^a-zA-Z0-9]/.test(password)) score++;
 
-        strengthIndicator.className = 'password-strength ' + strength.class;
-        strengthIndicator.textContent = strength.text;
-    });
-
-    // Password confirmation validation
-    const confirmPasswordField = document.getElementById('confirmPassword');
-    confirmPasswordField.addEventListener('input', function() {
-        const password = passwordField.value;
-        const confirmPassword = this.value;
-
-        if (confirmPassword && password !== confirmPassword) {
-            this.setCustomValidity('Passwords do not match');
+        strengthBar.className = 'strength-bar';
+        if (score < 3) {
+            strengthBar.classList.add('strength-weak');
+            strengthText.textContent = 'Weak';
+            strengthText.style.color = 'var(--color-danger)';
+        } else if (score < 5) {
+            strengthBar.classList.add('strength-medium');
+            strengthText.textContent = 'Medium';
+            strengthText.style.color = 'var(--color-warning)';
         } else {
-            this.setCustomValidity('');
+            strengthBar.classList.add('strength-strong');
+            strengthText.textContent = 'Strong';
+            strengthText.style.color = 'var(--color-success)';
         }
     });
 
     // Form validation
     document.getElementById('registerForm').addEventListener('submit', function(e) {
-        const password = passwordField.value;
-        const confirmPassword = confirmPasswordField.value;
-        const role = document.querySelector('input[name="role"]:checked');
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
 
-        if (password !== confirmPassword) {
+        if (password !== confirm) {
             e.preventDefault();
             alert('Passwords do not match');
-            return false;
-        }
-
-        if (!role) {
+        } else if (!document.querySelector('input[name="role"]:checked')) {
             e.preventDefault();
-            alert('Please select your role');
-            return false;
-        }
-
-        if (password.length < 6) {
+            alert('Please select a role');
+        } else if (password.length < 6) {
             e.preventDefault();
-            alert('Password must be at least 6 characters long');
-            return false;
+            alert('Password must be at least 6 characters');
         }
     });
 });
-
-function calculatePasswordStrength(password) {
-    let score = 0;
-
-    if (password.length >= 8) score++;
-    if (password.match(/[a-z]/)) score++;
-    if (password.match(/[A-Z]/)) score++;
-    if (password.match(/[0-9]/)) score++;
-    if (password.match(/[^a-zA-Z0-9]/)) score++;
-
-    if (score < 2) {
-        return { class: 'strength-weak', text: 'Weak password' };
-    } else if (score < 4) {
-        return { class: 'strength-medium', text: 'Medium strength' };
-    } else {
-        return { class: 'strength-strong', text: 'Strong password' };
-    }
-}
 </script>
 
 </body>

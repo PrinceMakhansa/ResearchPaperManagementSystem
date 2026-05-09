@@ -15,81 +15,46 @@
     <title>Upload Paper - Research Repository</title>
     <link rel="stylesheet" href="css/styles.css" />
     <style>
-        .file-upload-area {
-            border: 2px dashed var(--border-strong);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            text-align: center;
-            background: var(--bg-alt);
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .file-upload-area:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-        .file-upload-area.dragover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-            transform: scale(1.02);
-        }
-        .file-info {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: var(--success-light);
-            border: 1px solid var(--success);
+        .upload-section { max-width: 700px; }
+        .upload-requirements {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
             border-radius: var(--radius);
-            display: none;
+            padding: var(--space-4);
+            margin-bottom: var(--space-6);
         }
-        .file-error {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: var(--danger-light);
-            border: 1px solid var(--danger);
-            border-radius: var(--radius);
-            display: none;
-        }
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            display: block;
-        }
-        .form-requirements {
-            background: var(--bg-alt);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-        .requirements-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-        .requirements-list {
+        .upload-requirements h4 { margin-bottom: var(--space-2); }
+        .upload-requirements ul {
             margin: 0;
-            padding-left: 1.5rem;
-            color: var(--text-light);
+            padding-left: var(--space-5);
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
         }
-        .form-preview {
-            background: var(--bg-alt);
-            border: 1px solid var(--border);
+        .upload-requirements li { margin-bottom: var(--space-1); }
+        .file-drop {
+            border: 2px dashed var(--color-border-strong);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: var(--color-bg);
+        }
+        .file-drop:hover { border-color: var(--color-primary); }
+        .file-drop.dragover { border-color: var(--color-primary); background: var(--color-primary-light); }
+        .file-drop svg { width: 48px; height: 48px; color: var(--color-text-muted); margin-bottom: var(--space-4); }
+        .file-drop h4 { margin-bottom: var(--space-2); }
+        .file-drop small { color: var(--color-text-muted); }
+        .file-info-box {
+            margin-top: var(--space-4);
+            padding: var(--space-4);
             border-radius: var(--radius);
-            padding: 1rem;
-            margin-top: 1rem;
             display: none;
         }
-        .preview-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .character-count {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            text-align: right;
-            margin-top: 0.25rem;
-        }
+        .file-info-box.success { background: var(--color-success-light); border: 1px solid var(--color-success); }
+        .file-info-box.error { background: var(--color-danger-light); border: 1px solid var(--color-danger); }
+        .file-info-box small { color: var(--color-text-muted); }
+        .char-count { font-size: var(--text-xs); color: var(--color-text-muted); text-align: right; margin-top: var(--space-1); }
     </style>
 </head>
 <body>
@@ -100,253 +65,160 @@
             <li><a href="dashboard">Dashboard</a></li>
             <li><a href="listPapers">My Papers</a></li>
             <li><a href="allPapers">All Papers</a></li>
-            <li><a href="uploadPaper">Upload Paper</a></li>
+            <li><a href="uploadPaper" class="active">Upload Paper</a></li>
             <li><a href="logout">Logout</a></li>
         </ul>
     </div>
 </nav>
 
-<div class="container">
-    <h2 class="mt-0">Upload Research Paper</h2>
-    <p class="text-muted">Submit your research paper for review and publication in our repository.</p>
+<main class="container">
+    <div class="upload-section">
+        <h2 style="margin-bottom: var(--space-2);">Upload Research Paper</h2>
+        <p style="color: var(--color-text-muted); margin-bottom: var(--space-6);">Submit your paper for review</p>
 
-    <% String error = (String) request.getAttribute("error");
-       String msg = request.getParameter("msg");
-       if (error != null) { %>
-        <div class="alert alert-error"><%= error %></div>
-    <% } %>
-    <% if (msg != null) { %>
-        <div class="alert alert-success"><%= msg %></div>
-    <% } %>
+        <% String error = (String) request.getAttribute("error");
+           String msg = request.getParameter("msg");
+           if (error != null) { %>
+            <div class="alert alert-error"><%= error %></div>
+        <% } %>
+        <% if (msg != null) { %>
+            <div class="alert alert-success"><%= msg %></div>
+        <% } %>
 
-    <div class="form-requirements">
-        <div class="requirements-title">Submission Requirements:</div>
-        <ul class="requirements-list">
-            <li>Paper must be in PDF, DOC, or DOCX format</li>
-            <li>Maximum file size: 10MB</li>
-            <li>Title should be descriptive and concise</li>
-            <li>Abstract should summarize key findings (recommended 150-300 words)</li>
-            <li>All submissions undergo peer review process</li>
-        </ul>
-    </div>
-
-    <form action="uploadPaper" method="post" enctype="multipart/form-data" class="form-grid" style="max-width:800px;" id="uploadForm">
-        <div class="form-row">
-            <label for="title">Paper Title</label>
-            <input id="title" type="text" name="title" required maxlength="200"
-                   placeholder="Enter the title of your research paper" />
-            <div class="character-count" id="titleCount">0/200 characters</div>
+        <div class="upload-requirements">
+            <h4>Requirements</h4>
+            <ul>
+                <li>Format: PDF, DOC, or DOCX</li>
+                <li>Maximum file size: 10MB</li>
+                <li>Title: Max 200 characters</li>
+                <li>Abstract: Max 2000 characters</li>
+            </ul>
         </div>
 
-        <div class="form-row">
-            <label for="abstract">Abstract</label>
-            <textarea id="abstract" name="abstract" rows="8" required maxlength="2000"
-                      placeholder="Provide a comprehensive abstract that summarizes your research objectives, methodology, key findings, and conclusions."></textarea>
-            <div class="character-count" id="abstractCount">0/2000 characters</div>
-        </div>
+        <form action="uploadPaper" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-group">
+                <label class="form-label" for="title">Paper Title</label>
+                <input class="form-input" id="title" type="text" name="title" required maxlength="200"
+                       placeholder="Enter the title of your research paper" />
+                <div class="char-count" id="titleCount">0 / 200</div>
+            </div>
 
-        <div class="form-row">
-            <label for="paperFile">Upload Paper File</label>
-            <div class="file-upload-area" onclick="document.getElementById('paperFile').click()">
-                <input id="paperFile" type="file" name="paperFile" accept=".pdf,.doc,.docx" style="display: none;" required />
-                <div class="upload-content">
-                    <div><strong>Click to select</strong> or drag and drop your paper file here</div>
-                    <small class="text-muted">Supported formats: PDF, DOC, DOCX (Max: 10MB)</small>
+            <div class="form-group">
+                <label class="form-label" for="abstract">Abstract</label>
+                <textarea class="form-textarea" id="abstract" name="abstract" rows="6" required maxlength="2000"
+                          placeholder="Summarize your research objectives, methodology, and key findings..."></textarea>
+                <div class="char-count" id="abstractCount">0 / 2000</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Paper File</label>
+                <div class="file-drop" id="fileDrop">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <h4>Click or drag to upload</h4>
+                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                    <input id="paperFile" type="file" name="paperFile" accept=".pdf,.doc,.docx" style="display: none;" required />
+                </div>
+                <div class="file-info-box" id="fileSuccess">
+                    <strong>Selected:</strong> <span id="fileName"></span>
+                    <br><small>Size: <span id="fileSize"></span></small>
+                </div>
+                <div class="file-info-box error" id="fileError">
+                    <strong>Error:</strong> <span id="errorMsg"></span>
                 </div>
             </div>
-            <div class="file-info" id="fileInfo">
-                <strong>Selected File:</strong> <span id="fileName"></span><br>
-                <small>Size: <span id="fileSize"></span></small>
+
+            <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Submit for Review</button>
+                <a href="dashboard" class="btn btn-secondary">Cancel</a>
             </div>
-            <div class="file-error" id="fileError">
-                <strong>Error:</strong> <span id="errorMessage"></span>
-            </div>
-        </div>
-
-        <div class="form-preview" id="formPreview">
-            <div class="preview-title">Submission Preview:</div>
-            <div><strong>Title:</strong> <span id="previewTitle">-</span></div>
-            <div><strong>Abstract:</strong> <span id="previewAbstract">-</span></div>
-            <div><strong>File:</strong> <span id="previewFile">-</span></div>
-            <div><strong>Author:</strong> <%= currentUser.getName() %> (<%= currentUser.getEmail() %>)</div>
-        </div>
-
-        <div class="form-row">
-            <button type="submit" class="btn btn-large" id="submitBtn">Submit Paper for Review</button>
-        </div>
-
-        <div class="form-row">
-            <a href="dashboard" class="btn btn-soft">Back to Dashboard</a>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</main>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('paperFile');
-    const uploadArea = document.querySelector('.file-upload-area');
-    const fileInfo = document.getElementById('fileInfo');
+    const fileDrop = document.getElementById('fileDrop');
+    const fileSuccess = document.getElementById('fileSuccess');
     const fileError = document.getElementById('fileError');
-    const submitBtn = document.getElementById('submitBtn');
     const titleInput = document.getElementById('title');
     const abstractInput = document.getElementById('abstract');
-    const formPreview = document.getElementById('formPreview');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // File size limit (10MB)
-    const maxSize = 10 * 1024 * 1024;
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    // Character count
+    titleInput.addEventListener('input', function() {
+        document.getElementById('titleCount').textContent = this.value.length + ' / 200';
+    });
+    abstractInput.addEventListener('input', function() {
+        document.getElementById('abstractCount').textContent = this.value.length + ' / 2000';
+    });
 
-    // Character counting
-    function updateCharacterCount(input, countElement, max) {
-        const count = input.value.length;
-        countElement.textContent = count + '/' + max + ' characters';
-        if (count > max * 0.9) {
-            countElement.style.color = 'var(--warning)';
-        } else {
-            countElement.style.color = 'var(--text-muted)';
+    // File validation
+    function validateFile(file) {
+        const maxSize = 10 * 1024 * 1024;
+        const validExts = ['.pdf', '.doc', '.docx'];
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+        if (!validExts.includes(ext)) {
+            return 'Invalid file type. Use PDF, DOC, or DOCX.';
         }
+        if (file.size > maxSize) {
+            return 'File too large. Maximum 10MB.';
+        }
+        return null;
     }
 
-    titleInput.addEventListener('input', function() {
-        updateCharacterCount(this, document.getElementById('titleCount'), 200);
-        updatePreview();
-    });
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
 
-    abstractInput.addEventListener('input', function() {
-        updateCharacterCount(this, document.getElementById('abstractCount'), 2000);
-        updatePreview();
-    });
-
-    // File handling
-    function showFileInfo(file) {
+    function showFile(file) {
         document.getElementById('fileName').textContent = file.name;
-        document.getElementById('fileSize').textContent = formatFileSize(file.size);
-        fileInfo.style.display = 'block';
+        document.getElementById('fileSize').textContent = formatSize(file.size);
+        fileSuccess.style.display = 'block';
         fileError.style.display = 'none';
         submitBtn.disabled = false;
-        updatePreview();
     }
 
-    function showError(message) {
-        document.getElementById('errorMessage').textContent = message;
+    function showErr(msg) {
+        document.getElementById('errorMsg').textContent = msg;
         fileError.style.display = 'block';
-        fileInfo.style.display = 'none';
+        fileSuccess.style.display = 'none';
         submitBtn.disabled = true;
     }
 
-    function validateFile(file) {
-        const fileName = file.name.toLowerCase();
-        const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
-
-        if (!allowedTypes.includes(file.type) && !hasValidExtension) {
-            showError('Please select a PDF, DOC, or DOCX file.');
-            return false;
-        }
-
-        if (file.size > maxSize) {
-            showError('File size exceeds 10MB limit. Please select a smaller file.');
-            return false;
-        }
-
-        if (file.size === 0) {
-            showError('The selected file appears to be empty.');
-            return false;
-        }
-
-        return true;
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    function updatePreview() {
-        const title = titleInput.value.trim();
-        const abstract = abstractInput.value.trim();
-        const file = fileInput.files[0];
-
-        document.getElementById('previewTitle').textContent = title || '-';
-        document.getElementById('previewAbstract').textContent = abstract || '-';
-        document.getElementById('previewFile').textContent = file ? file.name : '-';
-
-        if (title || abstract || file) {
-            formPreview.style.display = 'block';
-        } else {
-            formPreview.style.display = 'none';
-        }
-    }
-
-    // File input events
     fileInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file && validateFile(file)) {
-            showFileInfo(file);
+        if (this.files[0]) {
+            const err = validateFile(this.files[0]);
+            if (err) showErr(err);
+            else showFile(this.files[0]);
         }
     });
 
-    // Drag and drop events
-    uploadArea.addEventListener('dragover', function(e) {
+    // Drag & drop
+    fileDrop.addEventListener('click', () => fileInput.click());
+    fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+    fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+    fileDrop.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadArea.classList.add('dragover');
-    });
-
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-    });
-
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-            if (validateFile(file)) {
-                fileInput.files = e.dataTransfer.files;
-                showFileInfo(file);
-            }
+        fileDrop.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) {
+            fileInput.files = e.dataTransfer.files;
+            const err = validateFile(e.dataTransfer.files[0]);
+            if (err) showErr(err);
+            else showFile(e.dataTransfer.files[0]);
         }
     });
 
-    // Form validation
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        const title = titleInput.value.trim();
-        const abstract = abstractInput.value.trim();
-        const file = fileInput.files[0];
-
-        if (!title) {
-            e.preventDefault();
-            titleInput.focus();
-            showError('Please enter a paper title.');
-            return false;
-        }
-
-        if (!abstract) {
-            e.preventDefault();
-            abstractInput.focus();
-            showError('Please provide an abstract.');
-            return false;
-        }
-
-        if (!file) {
-            e.preventDefault();
-            showError('Please select a file to upload.');
-            return false;
-        }
-
-        // Show loading state
-        submitBtn.innerHTML = 'Uploading...';
+    // Submit
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        submitBtn.textContent = 'Uploading...';
         submitBtn.disabled = true;
     });
-
-    // Auto-focus title field
-    titleInput.focus();
 });
 </script>
 

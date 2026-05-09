@@ -15,25 +15,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Papers - Research Repository</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <style>
-        .filters-section { background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius-lg); padding:1.25rem; margin-bottom:2rem; }
-        .filter-row { display:grid; grid-template-columns:2fr auto; gap:1rem; align-items:end; }
-        .status-filter { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:1rem; }
-        .status-filter-btn { padding:0.5rem 1rem; border:1px solid var(--border); background:var(--bg-alt); border-radius:var(--radius); text-decoration:none; color:var(--text); font-size:0.875rem; }
-        .status-filter-btn.active, .status-filter-btn:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
-        .papers-grid { display:grid; gap:1rem; }
-        .paper-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem 1.25rem; }
-        .paper-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
-        .paper-title { margin:0 0 0.5rem 0; font-size:1.1rem; font-weight:600; }
-        .paper-meta { font-size:0.75rem; color:var(--text-light); display:flex; gap:0.75rem; flex-wrap:wrap; }
-        .paper-abstract { margin:0.75rem 0; font-size:0.875rem; line-height:1.5; }
-        .paper-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
-        .empty-state { text-align:center; padding:2.5rem; color:var(--text-light); }
-    </style>
 </head>
 <body>
 <nav class="site-nav">
@@ -46,100 +31,106 @@
                 <li><a href="allPapers" class="active">All Papers</a></li>
                 <li><a href="uploadPaper">Upload Paper</a></li>
             <% } else { %>
-                <li><a href="allPapers" class="active">All Papers</a></li>
                 <li><a href="listPapers">Manage Papers</a></li>
+                <li><a href="allPapers" class="active">All Papers</a></li>
                 <li><a href="facultyDashboard">Faculty Dashboard</a></li>
             <% } %>
             <li><a href="logout">Logout</a></li>
         </ul>
     </div>
 </nav>
-<div class="container">
-    <h2 style="margin-top:0;">All Papers</h2>
-    <p class="text-muted">Browse all submitted papers. Students have read-only access.</p>
+
+<main class="container">
+    <div style="margin-bottom: var(--space-6);">
+        <h2 style="margin-bottom: var(--space-2);">All Papers</h2>
+        <p style="color: var(--color-text-muted); margin: 0;">Browse all submitted research papers</p>
+    </div>
 
     <% String error = (String) request.getAttribute("error");
        if (error != null) { %><div class="alert alert-error"><%= error %></div><% } %>
 
-    <!-- Stats -->
-    <div class="stats-grid">
-        <div class="stat-card"><h4>Submitted</h4><div class="value"><%= request.getAttribute("submittedCount") %></div></div>
-        <div class="stat-card"><h4>Under Review</h4><div class="value"><%= request.getAttribute("reviewCount") %></div></div>
-        <div class="stat-card"><h4>Accepted</h4><div class="value"><%= request.getAttribute("acceptedCount") %></div></div>
-        <div class="stat-card"><h4>Rejected</h4><div class="value"><%= request.getAttribute("rejectedCount") %></div></div>
+    <div class="stats-grid" style="margin-bottom: var(--space-6);">
+        <div class="stat-card"><div class="label">Submitted</div><div class="value"><%= request.getAttribute("submittedCount") %></div></div>
+        <div class="stat-card"><div class="label">Under Review</div><div class="value"><%= request.getAttribute("reviewCount") %></div></div>
+        <div class="stat-card"><div class="label">Accepted</div><div class="value"><%= request.getAttribute("acceptedCount") %></div></div>
+        <div class="stat-card"><div class="label">Rejected</div><div class="value"><%= request.getAttribute("rejectedCount") %></div></div>
     </div>
 
     <div class="filters-section">
-        <form method="get" action="allPapers" class="filter-row" style="grid-template-columns:1fr auto;">
-            <div class="form-row">
-                <label for="search">Search Papers</label>
-                <input id="search" name="search" type="text" placeholder="Search by title or abstract..." value="<%= searchTerm != null ? searchTerm : "" %>">
+        <form method="get" action="allPapers" class="filter-row">
+            <div class="form-group">
+                <label class="form-label" for="search">Search</label>
+                <input class="form-input" id="search" name="search" type="text"
+                       placeholder="Search by title or abstract..."
+                       value="<%= searchTerm != null ? searchTerm : "" %>" />
             </div>
-            <div class="form-row"><button type="submit" class="btn">Search</button></div>
+            <div class="form-group">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
         </form>
+        <div class="status-filter">
+            <a href="allPapers" class="<%= (statusFilter == null) ? "active" : "" %>">All</a>
+            <a href="allPapers?status=submitted" class="<%= "submitted".equals(statusFilter) ? "active" : "" %>">Submitted</a>
+            <a href="allPapers?status=under review" class="<%= "under review".equals(statusFilter) ? "active" : "" %>">Under Review</a>
+            <a href="allPapers?status=accepted" class="<%= "accepted".equals(statusFilter) ? "active" : "" %>">Accepted</a>
+            <a href="allPapers?status=rejected" class="<%= "rejected".equals(statusFilter) ? "active" : "" %>">Rejected</a>
+        </div>
     </div>
 
     <% if (papers == null || papers.isEmpty()) { %>
         <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
             <h3>No papers found</h3>
             <p>No papers match the current filters.</p>
         </div>
     <% } else { %>
-        <div class="papers-grid">
+        <div class="paper-list">
             <% for (Paper p : papers) { %>
             <div class="paper-card">
                 <div class="paper-header">
-                    <div style="flex:1;">
-                        <h3 class="paper-title"><%= p.getTitle() %></h3>
+                    <div style="flex: 1;">
+                        <h4 class="paper-title"><%= p.getTitle() %></h4>
                         <div class="paper-meta">
                             <span><%= p.getFormattedSubmissionDate() %></span>
                             <span><%= p.getAuthorName() != null ? p.getAuthorName() : "Unknown" %></span>
-                            <span><%= p.getAuthorEmail() != null ? p.getAuthorEmail() : "Unknown" %></span>
-                            <% if (p.getFilePath() != null && !p.getFilePath().isEmpty()) { %>
+                            <% if (p.getFilePath() != null) { %>
                                 <span><%= p.getFileName() %></span>
                             <% } %>
                         </div>
                     </div>
-                    <span class="<%= p.getStatusBadgeClass() %>"><%= p.getStatusDisplayName() %></span>
+                    <span class="badge badge-<%= p.getStatus().replace(" ", "-") %>"><%= p.getStatusDisplayName() %></span>
                 </div>
-                <div class="paper-abstract">
-                    <%= p.getShortAbstract(250) %>
-                </div>
+                <p class="paper-abstract"><%= p.getShortAbstract(250) %></p>
                 <div class="paper-actions">
                     <% if (currentUser.isFaculty() || currentUser.isAdmin()) { %>
-                        <% if (p.canBeReviewed()) { %>
-                            <% if (Paper.STATUS_SUBMITTED.equals(p.getStatus())) { %>
-                                <form action="updatePaperStatus" method="post" style="display:inline;">
-                                    <input type="hidden" name="paperId" value="<%= p.getPaperId() %>">
-                                    <input type="hidden" name="status" value="under review">
-                                    <input type="hidden" name="redirectUrl" value="allPapers">
-                                    <button type="submit" class="btn btn-small">Start Review</button>
-                                </form>
-                            <% } %>
-                            <form action="updatePaperStatus" method="post" style="display:inline;">
+                        <% if (p.canBeReviewed() && Paper.STATUS_SUBMITTED.equals(p.getStatus())) { %>
+                            <form action="updatePaperStatus" method="post" style="display: inline;">
                                 <input type="hidden" name="paperId" value="<%= p.getPaperId() %>">
-                                <input type="hidden" name="status" value="accepted">
+                                <input type="hidden" name="status" value="under review">
                                 <input type="hidden" name="redirectUrl" value="allPapers">
-                                <button type="submit" class="btn btn-success btn-small">Accept</button>
-                            </form>
-                            <form action="updatePaperStatus" method="post" style="display:inline;">
-                                <input type="hidden" name="paperId" value="<%= p.getPaperId() %>">
-                                <input type="hidden" name="status" value="rejected">
-                                <input type="hidden" name="redirectUrl" value="allPapers">
-                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Reject this paper?')">Reject</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Start Review</button>
                             </form>
                         <% } %>
                         <% if (Paper.STATUS_UNDER_REVIEW.equals(p.getStatus())) { %>
-                            <form action="updatePaperStatus" method="post" style="display:inline;">
+                            <form action="updatePaperStatus" method="post" style="display: inline;">
                                 <input type="hidden" name="paperId" value="<%= p.getPaperId() %>">
-                                <input type="hidden" name="status" value="submitted">
+                                <input type="hidden" name="status" value="accepted">
                                 <input type="hidden" name="redirectUrl" value="allPapers">
-                                <button type="submit" class="btn btn-soft btn-small">Back to Submitted</button>
+                                <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                            </form>
+                            <form action="updatePaperStatus" method="post" style="display: inline;">
+                                <input type="hidden" name="paperId" value="<%= p.getPaperId() %>">
+                                <input type="hidden" name="status" value="rejected">
+                                <input type="hidden" name="redirectUrl" value="allPapers">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this paper?')">Reject</button>
                             </form>
                         <% } %>
                     <% } else { %>
-                        <% if (p.getFilePath() != null && !p.getFilePath().isEmpty()) { %>
-                            <a class="btn btn-soft btn-small" target="_blank" href="<%= p.getFilePath() %>">View File</a>
+                        <% if (p.getFilePath() != null) { %>
+                            <a class="btn btn-secondary btn-sm" target="_blank" href="<%= p.getFilePath() %>">View File</a>
                         <% } %>
                     <% } %>
                 </div>
@@ -148,19 +139,10 @@
         </div>
     <% } %>
 
-    <div style="margin-top:2rem;text-align:center;">
-        <a href="dashboard" class="btn btn-soft">Back to Dashboard</a>
+    <div style="text-align: center; margin-top: var(--space-8);">
+        <a href="dashboard" class="btn btn-secondary">Back to Dashboard</a>
     </div>
-</div>
-<script>
-// confirm buttons
-document.querySelectorAll('button[onclick*="confirm"]').forEach(function(btn){
-  btn.addEventListener('click', function(e){
-    var attr = this.getAttribute('onclick') || '';
-    var m = attr.match(/'(.*)'/);
-    if(!m || !confirm(m[1])){ e.preventDefault(); }
-  });
-});
-</script>
+</main>
+
 </body>
 </html>
